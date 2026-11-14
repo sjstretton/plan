@@ -1,5 +1,5 @@
 # CLAUDE.md
 
-See [AGENTS.md](AGENTS.md) for the instructions that apply to all agents, including Claude Code. Follow them as if they were written here. Then read the instructions for the part you are working in: `4 Planning Instructions/AGENTS.md` for planning (folders 1–4), `H Writing Instructions/AGENTS.md` for writing (folders A–H).
+See [AGENTS.md](AGENTS.md) for the instructions that apply to all agents, including Claude Code. Follow them as if they were written here. Then read `0 Daily and Weekly Task Lists/3 Planning Instructions/AGENTS.md` and its `NORMS.md`.
 
 Add Claude-specific notes below this line only when they do not apply to other agents.
