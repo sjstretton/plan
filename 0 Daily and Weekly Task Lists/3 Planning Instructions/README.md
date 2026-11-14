@@ -16,14 +16,16 @@ Stephen's planning repo (`cpmodelai/planning`). **Stephen sets the priorities an
     ├── 4-Priorities.txt                the current priority's next steps and decisions
     ├── 1 Quick Wins and Next Milestone/  quick win list, next milestone plan (2A), list of milestones,
     │                                     Other Milestones/ (2B website, 2C journal paper)
-    ├── 2 Strategic Plans/              FY27 work plan, master plan (.xlsx and link), printable and weekly (Word),
+    ├── 2 Strategic Plans/              FY27 work plan, master plan (.xlsx and link), weekly (Word),
     │                                   Planning Templates/, past years (FY24, FY25, FY25-26, FY26), Team Workshop/
     ├── 3 Planning Instructions/        NORMS.md (the rules), AGENTS.md, CLAUDE.md, README.md (this file),
-    │                                   CheckRepo.bat, Context/ (routines, weekly log, repo directory, sync state),
-    │                                   Scripts/ (update.py, make_printable.py: out of step with this layout)
-    └── 4 Archive/                      retired files (old task table, one-priority briefing, done list, ...)
+    │                                   CheckRepo.bat, Context/ (routines, weekly log, repo directory),
+    │                                   Scripts/ (update.py: sync, build, render, eod, check; make_printable.py)
+    ├── 4 Archive/                      retired files (one-priority briefing, done list, ...)
+    └── 5 Computer Generated/           written by the scripts only: 5-TaskContextAndProjectPlans.md (task table),
+                                        Printable/ (Me-Printable-Tracker.docx, Versions/), Sync/ (sync-state.json)
 ```
 
 ## Master Google Sheet
 
-[Open](https://docs.google.com/spreadsheets/d/1WEHemG3x0kJ3yk-u1RcSheqYsX0T2aAXmiba9veaQag/edit). Tabs: **Today** (start here), Dashboard, Track 2, Tracker, Plan, Strategic plan (hidden), Context, Regular lists, Updateable lists, Links. Dashboard, Plan, Context and the two lists tabs are frozen as of 2 Nov 2026 (see `NORMS.md`).
+[Open](https://docs.google.com/spreadsheets/d/1WEHemG3x0kJ3yk-u1RcSheqYsX0T2aAXmiba9veaQag/edit). Tabs: **Today** (start here), Dashboard, Track 2, Tracker, Plan, Strategic plan (hidden), Context, Regular lists, Updateable lists, Links. Dashboard, Plan, Context and the two lists tabs are built and synced by `Scripts/update.py` (see `NORMS.md`).

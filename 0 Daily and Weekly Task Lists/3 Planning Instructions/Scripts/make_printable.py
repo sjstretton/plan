@@ -1,9 +1,9 @@
-"""Build the printable tracker (0 Daily and Weekly Task Lists/Me-Printable-Tracker.docx) from the master lists.
+"""Build the printable tracker (5 Computer Generated/Printable/Me-Printable-Tracker.docx) from the master lists.
 
-The root file never carries a version number, so links to it stay valid; a copy of each layout
-version goes to 5 Archive/Printable versions/. Normally run through Scripts/update.py build.
+The file never carries a version number, so links to it stay valid; a copy of each layout
+version goes to 5 Computer Generated/Printable/Versions/. Normally run through Scripts/update.py build.
 
-Changing lists come from 5-TaskContextAndProjectPlans.md, 1-NextStep.txt,
+Changing lists come from 5 Computer Generated/5-TaskContextAndProjectPlans.md, 1-NextStep.txt,
 2-DayWeekPlan.txt and Context/3-Me-WeeklyLog.md; the fixed routines from Context/routines.md.
 Every task and milestone shows its points. Tick boxes are Word check-box controls (click to tick).
 Page 1: the morning briefing (the Dashboard tab on paper: quick rewards with deadlines, the focus
@@ -27,12 +27,13 @@ from docx.enum.text import WD_BREAK, WD_TAB_ALIGNMENT, WD_TAB_LEADER
 from docx.oxml import parse_xml
 from docx.shared import Pt, RGBColor, Inches
 
-ROOT = Path(__file__).resolve().parents[1]   # 4 Planning Instructions
-REPO = ROOT.parent                           # combined repo root
-VERSION = "0.6"
-PLANS = REPO / "0 Daily and Weekly Task Lists"
-OUT = PLANS / "Me-Printable-Tracker.docx"
-ARCHIVE = REPO / "5 Archive" / "Printable versions"
+ROOT = Path(__file__).resolve().parents[1]   # 3 Planning Instructions
+PLANS = ROOT.parent                          # 0 Daily and Weekly Task Lists
+REPO = PLANS.parent                          # repo root
+GEN = PLANS / "5 Computer Generated"
+VERSION = "0.7"
+OUT = GEN / "Printable" / "Me-Printable-Tracker.docx"
+ARCHIVE = GEN / "Printable" / "Versions"
 TASKS = "5-TaskContextAndProjectPlans.md"
 NAVY = RGBColor(0x1F, 0x4E, 0x79)
 GREY = RGBColor(0x59, 0x59, 0x59)
@@ -96,6 +97,24 @@ def section(secs, prefix):
             ctx = re.search(r"\((.*)\)", k)
             return (ctx.group(1) if ctx else ""), v
     return "", []
+
+
+def first_section(secs, *prefixes):
+    """section() for the first prefix that exists: the old and the new heading names."""
+    for p in prefixes:
+        if any(k.startswith(p) for k in secs):
+            return section(secs, p)
+    return "", []
+
+
+def section_title(text, *heads):
+    """The line right after the first '# HEAD' heading that exists, if it is not an item ('' if none)."""
+    for h in heads:
+        if f"# {h}" in text:
+            rest = text.split(f"# {h}", 1)[1].strip().splitlines()
+            first = rest[0].strip() if rest else ""
+            return "" if not first or first.startswith(("-", "#")) or re.match(r"\d+\.", first) else first
+    return ""
 
 
 def week_plan(text):
@@ -340,7 +359,7 @@ def summary(tasks, nxt, today):
 
 def build(today, pages=None):
     pages = pages or {}
-    tasks = md_tables((PLANS / TASKS).read_text())
+    tasks = md_tables((GEN / TASKS).read_text())
     nxt = sections((PLANS / "1-NextStep.txt").read_text())
     plan = sections((PLANS / "2-DayWeekPlan.txt").read_text())
     lw_title, lw_rows = last_week((ROOT / "Context/3-Me-WeeklyLog.md").read_text())
@@ -350,12 +369,13 @@ def build(today, pages=None):
     places = tasks["Lists by place"]
     burn = tasks["Milestones (burndown)"]
     day = f"Done {today.day} {today.strftime('%b')}"
-    here_ctx, here = section(nxt, "HERE AND NOW")
-    quick = section(nxt, "QUICK WINS")[1]
-    to_plan = section(nxt, "TO PLAN")[1]
-    today_items = section(plan, "TODAY")[1]
-    week_items = section(plan, "THIS WEEK")[1]
-    week_title = (PLANS / "2-DayWeekPlan.txt").read_text().split("# THIS WEEK", 1)[1].strip().splitlines()[0]
+    # Old list names first, then Stephen's new ones (from 14 Nov 2026)
+    here_ctx, here = first_section(nxt, "HERE AND NOW", "NOW LIST")
+    quick = first_section(nxt, "QUICK WINS", "POINTS LIST")[1]
+    to_plan = first_section(nxt, "TO PLAN")[1]
+    today_items = first_section(plan, "TODAY", "DAY PLAN")[1]
+    week_items = first_section(plan, "THIS WEEK", "WEEK PLAN")[1]
+    week_title = section_title((PLANS / "2-DayWeekPlan.txt").read_text(), "THIS WEEK", "WEEK PLAN")
 
     sm = summary(tasks, nxt, today)
     earned, open_pts, states, behind, upcoming = sm["earned"], sm["open"], sm["states"], sm["behind"], sm["upcoming"]

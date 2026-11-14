@@ -34,9 +34,10 @@ Stephen describes himself as **AAAA**: anxious-avoidant, easily overwhelmed, bot
 | `1 Quick Wins and Next Milestone/` | `1 Quick Win List.txt`; the current milestone plan (`2A ...`); `3 List of Next Milestones.txt` (only the ones Stephen chooses, in his order); other milestone plans in `Other Milestones/` | Stephen chooses; AI keeps each plan up to date |
 | `2 Strategic Plans/` | FY27 work plan, master plan, templates, past years | Stephen |
 | `3 Planning Instructions/` | These rules, `AGENTS.md`, `README.md`, `Context/`, `Scripts/` | AI, when Stephen changes the rules |
-| `4 Archive/` | Retired files (including the old task table `5-TaskContextAndProjectPlans.md`, `3-OnePriority.txt`, the old project plans and done list). Read-only: don't revive them unless asked | - |
+| `4 Archive/` | Retired files (`3-OnePriority.txt`, the old project plans and done list). Read-only: don't revive them unless asked | - |
+| `5 Computer Generated/` | Files the scripts maintain; don't edit by hand. `5-TaskContextAndProjectPlans.md` (repo copy of the Sheet's Context tab: tasks, milestones, tables); `Printable/Me-Printable-Tracker.docx` (built) and `Printable/Versions/`; `Sync/sync-state.json` (last agreed state) | Scripts |
 
-Keep each file in the headings it already has. Don't rename or move files unless Stephen asks.
+Stephen's files stay at the top of `0 Daily and Weekly Task Lists/`; anything a script writes goes in `5 Computer Generated/`. Keep each file in the headings it already has. Don't rename or move files unless Stephen asks.
 
 ## General rules
 
@@ -54,10 +55,14 @@ Keep each file in the headings it already has. Don't rename or move files unless
 - **Today** (first tab): Stephen's one-screen day: the priority's next step, core items, health and the score. Update it when he gives you the day's items or ticks.
 - **Tracker**: points, the week, the daily tracker (CPAP, Kriya, gym). Log what he gives.
 - **Links**: links to the repo files at `cpmodelai/planning`. Keep them in step with the folder layout.
-- **Dashboard, Plan, Context, Regular lists, Updateable lists**: built by `Scripts/update.py` from the old task table, which is now archived. They are frozen as of Mon 2 Nov 2026 and are not synced. Don't rebuild them unless Stephen asks to bring the script back in line with the new layout.
-- **Track 2, Strategic plan**: edited by hand.
+- **Plan**: Stephen's four list files (`4-Priorities.txt` first, then `1-NextStep.txt`, `3-PrioritiesAndQuickWins.txt`, `2-DayWeekPlan.txt`), then the strategic priorities, burndown and key decisions. **Dashboard**: the NOW LIST and POINTS LIST as quick rewards, the morning routine, the focus project and priority milestone. **Context**: the task table. **Regular lists** and **Updateable lists**: the lists. These five are built and synced by `Scripts/update.py` (below); never change their layout by hand.
+- **Track 2, Strategic plan, Today, Links**: edited by hand.
 
 Only one session writes to the Sheet at a time.
+
+## Keeping the repo and the Sheet consistent
+
+`Scripts/update.py` keeps the five synced tabs, the repo files and the printable in step. Each item (a list section, a task row, a table) is compared three ways: repo, Sheet and the last agreed state (`5 Computer Generated/Sync/sync-state.json`). Changed on one side only: that side wins. Changed differently on both sides: a conflict, and Stephen decides. `AGENTS.md` has the steps. Run it before every push to main that touches planning files, and after Stephen changes his lists.
 
 ## Standard requests
 

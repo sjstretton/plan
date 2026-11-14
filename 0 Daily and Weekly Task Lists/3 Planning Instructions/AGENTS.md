@@ -11,6 +11,7 @@ Paths below are from `0 Daily and Weekly Task Lists/`.
 - Strategic plans: `2 Strategic Plans/` (FY27 work plan `Stephen_FY27_Work_Plan_v2.6_15thOct.docx`).
 - Rules and context: `3 Planning Instructions/` (this folder).
 - Retired files: `4 Archive/`. Don't edit or revive them unless asked.
+- Computer-maintained files: `5 Computer Generated/` (task table, printable, sync state). Only the scripts write there.
 - Master Google Sheet: https://docs.google.com/spreadsheets/d/1WEHemG3x0kJ3yk-u1RcSheqYsX0T2aAXmiba9veaQag/edit. Edit it in place with the Google Sheets connector.
 
 ## When Stephen gives you priorities or tasks
@@ -23,11 +24,23 @@ Paths below are from `0 Daily and Weekly Task Lists/`.
 ## Sheet
 
 - Read a tab with `get_values` before you write to it; Stephen may have changed it.
-- Dashboard, Plan, Context, Regular lists and Updateable lists are frozen (2 Nov 2026). `Scripts/update.py` still points at the archived task table, so don't run `sync`, `render`, `build`, `eod` or `check` until Stephen asks for the script to be brought in line with the new layout.
+- Today, Track 2, Strategic plan and Links are edited by hand. Dashboard, Plan, Context, Regular lists and Updateable lists are built by `Scripts/update.py`: use the procedure below.
+
+## Sync: keep the repo, the Sheet and the printable consistent
+
+Run the scripts from `3 Planning Instructions/`. Only one session writes to the Sheet at a time. Stephen's change is the master wherever he made it; if both sides changed the same item differently, ask him which to keep.
+
+1. `git pull`.
+2. Read the Dashboard, Plan, Context, Regular lists, Updateable lists and Tracker tabs with `get_values` (range `A1:K400` each) and save them as one JSON file in your scratchpad: `{"Dashboard": values, "Plan": values, ...}`. Run `python3 Scripts/update.py check-sheet --snapshot <file>`.
+3. `python3 Scripts/update.py sync --snapshot <file> --apply`. Exit code 2: conflicts; show Stephen each one and stop until he decides. Exit code 4: a tab is missing from the snapshot.
+4. `python3 Scripts/update.py build` (`--force` only after folding a hand edit of the printable into the sources).
+5. `python3 Scripts/update.py render --out <payload> --snapshot <file>`. For each changed tab, send its `requests` with `update_spreadsheet`, then write its `values` from A1 with `update_values` (replace an empty row `[]` with `[""]`). Then write each `Tracker ranges` entry. Read the tabs back and check them.
+6. `python3 Scripts/update.py baseline`, then `python3 Scripts/update.py check` (must print OK).
+7. Commit and push.
 
 ## End of day (Stephen asks for "the end-of-day tidy")
 
 1. Read the Today tab and the files; ask "Anything else done today?"
-2. Move ticked items to DONE with the date, in the files and on the Sheet. Done anywhere is done everywhere.
+2. Sync steps 1-3, then `python3 Scripts/update.py eod --snapshot <file>` (dry run): show Stephen what it will close; then run it with `--apply`. Done anywhere is done everywhere.
 3. Ask Stephen for tomorrow's items if he hasn't given them; don't invent them. Put what he gives into `1-NextStep.txt` and the Today tab.
-4. Commit and push to the assigned branch (or main if Stephen asks).
+4. Sync steps 4-7 (`build --date <tomorrow>`), then delete the temporary .eod-tracker.json in 5 Computer Generated/Sync/ (git-ignored). Push to the assigned branch, or main if Stephen asks.

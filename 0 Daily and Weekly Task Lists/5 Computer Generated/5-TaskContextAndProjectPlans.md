@@ -1,8 +1,8 @@
 # TASKS, CONTEXT AND PROJECT PLANS
 
-Text copy of the **Context** tab of the master Google Sheet (the master). Rules: `NORMS.md`.
+Computer-maintained text copy of the **Context** tab of the master Google Sheet (the master). Stephen sets the tasks; `Scripts/update.py sync` keeps this file in step with the Sheet. Rules: `NORMS.md`.
 
-The printable tracker (`Me-Printable-Tracker.docx`, in this folder) is built from this file: run `python3 Scripts/update.py build`. The Context, Plan and list tabs of the Sheet are kept in step by `Scripts/update.py` (`NORMS.md`, "Keeping everything consistent").
+The printable tracker (`Printable/Me-Printable-Tracker.docx`, next to this file) is built from this file: run `python3 Scripts/update.py build`. The Context, Plan and list tabs of the Sheet are kept in step by `Scripts/update.py` (`NORMS.md`, "Keeping everything consistent").
 
 Last reviewed: Sat 31 Oct 2026, morning (Philippines). Open task points: 5,500.
 

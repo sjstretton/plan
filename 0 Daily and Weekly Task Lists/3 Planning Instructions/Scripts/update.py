@@ -31,18 +31,24 @@ import re
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]   # 4 Planning Instructions
-REPO = ROOT.parent                           # combined repo root (planning 0-3, writing A-F)
+ROOT = Path(__file__).resolve().parents[1]   # 3 Planning Instructions
+PLANS = ROOT.parent                          # 0 Daily and Weekly Task Lists (Stephen's files)
+REPO = PLANS.parent                          # repo root
+GEN = PLANS / "5 Computer Generated"         # files the scripts maintain: task table, printable, sync state
 sys.path.insert(0, str(ROOT / "Scripts"))
 import make_printable as mp  # noqa: E402
 
-STATE = ROOT / "Context" / "sync-state.json"
-PLANS = REPO / "0 Daily and Weekly Task Lists"
-TASKS = PLANS / "5-TaskContextAndProjectPlans.md"
+STATE = GEN / "Sync" / "sync-state.json"
+EOD_FILE = GEN / "Sync" / ".eod-tracker.json"
+TASKS = GEN / "5-TaskContextAndProjectPlans.md"
 NEXT = PLANS / "1-NextStep.txt"
 DAYWEEK = PLANS / "2-DayWeekPlan.txt"
+QUICKWINS = PLANS / "3-PrioritiesAndQuickWins.txt"
+PRIORITIES = PLANS / "4-Priorities.txt"
+# Stephen's plan files, in the order the Plan tab shows them: (unit prefix, path)
+PLAN_FILES = [("priorities", PRIORITIES), ("next", NEXT), ("quickwins", QUICKWINS), ("dayweek", DAYWEEK)]
 ROUTINES = ROOT / "Context" / "routines.md"
-PRINT_SOURCES = [TASKS, NEXT, DAYWEEK, ROUTINES, ROOT / "Context" / "3-Me-WeeklyLog.md", ROOT / "Scripts" / "make_printable.py"]
+PRINT_SOURCES = [TASKS, NEXT, DAYWEEK, QUICKWINS, PRIORITIES, ROUTINES, ROOT / "Context" / "3-Me-WeeklyLog.md", ROOT / "Scripts" / "make_printable.py"]
 SHEET_IDS = {"Dashboard": 120, "Plan": 106, "Context": 103, "Regular lists": 108, "Updateable lists": 111}
 ID_RE = re.compile(r"\b([TP]\d{2})\b")
 
@@ -146,7 +152,9 @@ def parse_plan_file(path, prefix):
 
 def plan_units():
     units = {}
-    for path, prefix in [(NEXT, "next"), (DAYWEEK, "dayweek")]:
+    for prefix, path in PLAN_FILES:
+        if not path.exists():
+            continue
         secs, order, _ = parse_plan_file(path, prefix)
         for k in order:
             s = secs[k]
@@ -157,7 +165,7 @@ def plan_units():
 
 def write_plan_unit(key, unit):
     prefix, sec = key[5:].split("/", 1)
-    path = NEXT if prefix == "next" else DAYWEEK
+    path = dict(PLAN_FILES)[prefix]
     secs, order, lines = parse_plan_file(path, prefix)
     new = [unit["head"]] + ([unit["title"], ""] if unit.get("title") else [])
     new += [render_item(*it, n=i + 1) for i, it in enumerate(unit["items"])]
@@ -280,7 +288,11 @@ def repo_units():
 # ====================================================================== the Sheet: render
 
 PLAN_NICE = {"NEXT STEP": "Next step", "HERE AND NOW": "Here and now", "QUICK WINS": "Quick wins",
-             "TO PLAN": "To plan", "DONE": "Done", "TODAY": "Today", "THIS WEEK": "This week"}
+             "TO PLAN": "To plan", "DONE": "Done", "TODAY": "Today", "THIS WEEK": "This week",
+             "NOW LIST": "Now list", "POINTS LIST": "Points list", "SEQUENCING THINGS": "Sequencing",
+             "DAY PLAN": "Day plan", "WEEK PLAN": "Week plan", "DECIDE": "Decide"}
+# Plan sections whose items are the Dashboard's quick rewards (old and new list-1 layouts)
+REWARD_SECTIONS = ("plan:next/HERE AND NOW", "plan:next/Do now", "plan:next/Do later", "plan:next/NOW LIST", "plan:next/POINTS LIST")
 
 
 def pts_formula(ids):
@@ -332,14 +344,13 @@ def render(units, snapshot=None, today=None):
             add([checked if kind == "box" else "", text, ", ".join(ids), pts_formula(ids), value], "item" if kind == "box" else "itemnb", f"item|{key}|{kind}")
         add([], "blank")
 
-    for k in [k for k in units if k.startswith("plan:next/")]:
-        if k.endswith("/NEXT STEP"):
-            add(["", units[k]["title"] or ""], "note", f"title|{k}")
-            rows[-1][8] = f"sec|{k}|{units[k]['head']}"
-            continue
-        plan_section(k)
-    for k in [k for k in units if k.startswith("plan:dayweek/")]:
-        plan_section(k)
+    for prefix, _ in PLAN_FILES:
+        for k in [k for k in units if k.startswith(f"plan:{prefix}/")]:
+            if k.endswith("/NEXT STEP"):
+                add(["", units[k]["title"] or ""], "note", f"title|{k}")
+                rows[-1][8] = f"sec|{k}|{units[k]['head']}"
+                continue
+            plan_section(k)
 
     for sec in PLAN_TABLES:
         u = units.get(f"table:{sec}")
@@ -422,7 +433,7 @@ def render(units, snapshot=None, today=None):
             fmt.append("item")
     out["Updateable lists"] = {"values": rows, "fmt": fmt, "widths": [34, 150, 560, 70]}
 
-    eod_file = ROOT / "Context" / ".eod-tracker.json"
+    eod_file = EOD_FILE
     tracker = tracker_ranges(json.loads(eod_file.read_text()) if eod_file.exists() else None)
     for tab, t in out.items():
         t["sheetId"] = SHEET_IDS[tab]
@@ -539,9 +550,9 @@ def render_dashboard(units, snapshot, today):
     add(["", "By", "Reward", "Pts", "Why it pays", "Task"], "th", "ro")
     q0 = len(rows) + 1
     for k in units:
-        if k in ("plan:next/HERE AND NOW", "plan:next/Do now", "plan:next/Do later"):
+        if k in REWARD_SECTIONS:
             for kind, checked, text, ids, value in units[k]["items"]:
-                if kind != "box":
+                if kind not in ("box", "bullet"):
                     continue
                 by, rest = mp.split_deadline(text)
                 key = f"reward|{text}"
@@ -864,7 +875,9 @@ def check():
     if dup:
         errors.append(f"Duplicate IDs in the task file: {', '.join(dup)}")
     known = set(ids)
-    for path in (NEXT, DAYWEEK):
+    for _, path in PLAN_FILES:
+        if not path.exists():
+            continue
         for i in set(ID_RE.findall(path.read_text())):
             if i not in known:
                 errors.append(f"{path.name} names {i}, which is not in the task file")
@@ -875,10 +888,12 @@ def check():
             errors.append(f"Lists by place row has the wrong number of columns: {r.get('Item')}")
     for doc in (ROOT / "README.md", ROOT / "AGENTS.md", ROOT / "NORMS.md", TASKS, ROOT / "Context" / "routines.md"):
         for ref in re.findall(r"`([^`*<>]+\.(?:md|txt|docx|py|xlsx|pptx|url|bat|json))`", doc.read_text(encoding="utf-8-sig")):
+            if re.match(r"(writing/|[A-H] )", ref):   # files in the separate writing repo
+                continue
             if not (ROOT / ref).exists() and not (REPO / ref).exists() and not list(REPO.glob(f"**/{Path(ref).name}")):
                 errors.append(f"{doc.relative_to(REPO)} refers to `{ref}`, which does not exist")
-    if list(PLANS.glob("Me-Printable-Tracker_v*.docx")):
-        errors.append("A versioned printable is in 0 Daily and Weekly Task Lists; versions belong in 5 Archive/Printable versions/")
+    if [p for p in PLANS.rglob("Me-Printable-Tracker_v*.docx") if p.parent != mp.ARCHIVE]:
+        errors.append("A versioned printable is outside 5 Computer Generated/Printable/Versions/")
     state = load_state()
     pr = state.get("printable", {})
     if not mp.OUT.exists():
@@ -1075,7 +1090,7 @@ def end_of_day(snapshot_path, date, apply):
             if k.startswith("plan:"):
                 write_plan_unit(k, u)
         write_task_tables(units)
-        (ROOT / "Context" / ".eod-tracker.json").write_text(json.dumps(tracker, indent=1, ensure_ascii=False))
+        (EOD_FILE).write_text(json.dumps(tracker, indent=1, ensure_ascii=False))
         print("Applied to the repo. Next: render (it includes the Tracker ranges), write the Sheet, baseline.", file=sys.stderr)
     return 0
 
