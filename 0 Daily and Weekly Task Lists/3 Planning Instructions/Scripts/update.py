@@ -43,12 +43,13 @@ EOD_FILE = GEN / "Sync" / ".eod-tracker.json"
 TASKS = GEN / "5-TaskContextAndProjectPlans.md"
 NEXT = PLANS / "1-NextStep.txt"
 DAYWEEK = PLANS / "2-DayWeekPlan.txt"
-QUICKWINS = PLANS / "3-PrioritiesAndQuickWins.txt"
-PRIORITIES = PLANS / "4-Priorities.txt"
+QUICKWINS = PLANS / "3-PrioritiesAndQuickWins.txt"   # removed by Stephen 16 Nov 2026; skipped if absent
+PRIORITIES = PLANS / "3-ProjectPlanPhD.txt"          # was 4-Priorities.txt (renamed 16 Nov 2026)
 # Stephen's plan files, in the order the Plan tab shows them: (unit prefix, path)
 PLAN_FILES = [("priorities", PRIORITIES), ("next", NEXT), ("quickwins", QUICKWINS), ("dayweek", DAYWEEK)]
 ROUTINES = ROOT / "Context" / "routines.md"
-PRINT_SOURCES = [TASKS, NEXT, DAYWEEK, QUICKWINS, PRIORITIES, ROUTINES, ROOT / "Context" / "3-Me-WeeklyLog.md", ROOT / "Scripts" / "make_printable.py"]
+PRINT_SOURCES = [p for p in [TASKS, NEXT, DAYWEEK, QUICKWINS, PRIORITIES, ROUTINES, ROOT / "Context" / "3-Me-WeeklyLog.md",
+                              ROOT / "Scripts" / "make_printable.py"] if p.exists()]
 SHEET_IDS = {"Dashboard": 120, "Plan": 106, "Context": 103, "Regular lists": 108, "Updateable lists": 111}
 ID_RE = re.compile(r"\b([TP]\d{2})\b")
 
@@ -290,7 +291,7 @@ def repo_units():
 PLAN_NICE = {"NEXT STEP": "Next step", "HERE AND NOW": "Here and now", "QUICK WINS": "Quick wins",
              "TO PLAN": "To plan", "DONE": "Done", "TODAY": "Today", "THIS WEEK": "This week",
              "NOW LIST": "Now list", "POINTS LIST": "Points list", "SEQUENCING THINGS": "Sequencing",
-             "DAY PLAN": "Day plan", "WEEK PLAN": "Week plan", "DECIDE": "Decide"}
+             "DAY PLAN": "Day plan", "WEEK PLAN": "Week plan", "WEEK PRIORITIES": "Week priorities", "DECIDE": "Decide"}
 # Plan sections whose items are the Dashboard's quick rewards (old and new list-1 layouts)
 REWARD_SECTIONS = ("plan:next/HERE AND NOW", "plan:next/Do now", "plan:next/Do later", "plan:next/NOW LIST", "plan:next/POINTS LIST")
 
@@ -892,7 +893,7 @@ def check():
                 continue
             if not (ROOT / ref).exists() and not (REPO / ref).exists() and not list(REPO.glob(f"**/{Path(ref).name}")):
                 errors.append(f"{doc.relative_to(REPO)} refers to `{ref}`, which does not exist")
-    if [p for p in PLANS.rglob("Me-Printable-Tracker_v*.docx") if p.parent != mp.ARCHIVE]:
+    if [p for p in PLANS.rglob("Me-Printable-Tracker_v*.docx") if p.parent != mp.ARCHIVE and "X - Archive" not in p.parts]:
         errors.append("A versioned printable is outside 5 Computer Generated/Printable/Versions/")
     state = load_state()
     pr = state.get("printable", {})

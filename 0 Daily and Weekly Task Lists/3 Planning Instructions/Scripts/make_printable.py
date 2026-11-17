@@ -8,7 +8,8 @@ Changing lists come from 5 Computer Generated/5-TaskContextAndProjectPlans.md, 1
 Every task and milestone shows its points. Tick boxes are Word check-box controls (click to tick).
 Page 1: the morning briefing (the Dashboard tab on paper: quick rewards with deadlines, the focus
 project's two next steps, the priority burndown, list 2, decisions, the morning routine).
-Page 2: contents, immediate steps, today, this week.
+Page 2: contents, immediate steps, today, the week plan (WEEK PRIORITIES in 2-DayWeekPlan.txt) and
+the weekly update for the boss (this merges the old Word weekly plan, Me-Weekly.docx, into the tracker).
 The contents page numbers come from a LibreOffice render when soffice is installed.
 
 Usage: python3 Scripts/make_printable.py [--date 2026-10-18]
@@ -31,7 +32,7 @@ ROOT = Path(__file__).resolve().parents[1]   # 3 Planning Instructions
 PLANS = ROOT.parent                          # 0 Daily and Weekly Task Lists
 REPO = PLANS.parent                          # repo root
 GEN = PLANS / "5 Computer Generated"
-VERSION = "0.7"
+VERSION = "0.8"
 OUT = GEN / "Printable" / "Me-Printable-Tracker.docx"
 ARCHIVE = GEN / "Printable" / "Versions"
 TASKS = "5-TaskContextAndProjectPlans.md"
@@ -123,6 +124,22 @@ def week_plan(text):
     title = lines[0] if lines else ""
     goals = [re.sub(r"^\d+\.\s*", "", l) for l in lines if re.match(r"^\d+\.", l)]
     return title, goals
+
+
+def week_priorities(text):
+    """The '# WEEK PRIORITIES' block of 2-DayWeekPlan.txt -> [(priority, [steps])], in Stephen's order."""
+    if "# WEEK PRIORITIES" not in text:
+        return []
+    part = re.split(r"^# ", text.split("# WEEK PRIORITIES", 1)[1], flags=re.M)[0]
+    out = []
+    for line in part.splitlines():
+        l = line.strip()
+        m = re.match(r"^\d+\.\s*(.*)$", l)
+        if m:
+            out.append((m.group(1).strip(), []))
+        elif l.startswith("- ") and out:
+            out[-1][1].append(re.sub(r"^\[[ x]\]\s*", "", l[2:].strip()))
+    return out
 
 
 def last_week(text):
@@ -376,6 +393,9 @@ def build(today, pages=None):
     today_items = first_section(plan, "TODAY", "DAY PLAN")[1]
     week_items = first_section(plan, "THIS WEEK", "WEEK PLAN")[1]
     week_title = section_title((PLANS / "2-DayWeekPlan.txt").read_text(), "THIS WEEK", "WEEK PLAN")
+    week_prios = week_priorities((PLANS / "2-DayWeekPlan.txt").read_text())
+    monday = today - dt.timedelta(days=today.weekday())
+    week_of = f"Week of {monday.day} {monday.strftime('%b %Y')} (Mon {monday.day} - Fri {(monday + dt.timedelta(days=4)).day} {(monday + dt.timedelta(days=4)).strftime('%b')})"
 
     sm = summary(tasks, nxt, today)
     earned, open_pts, states, behind, upcoming = sm["earned"], sm["open"], sm["states"], sm["behind"], sm["upcoming"]
@@ -433,7 +453,8 @@ def build(today, pages=None):
     doc.heading("Today and this week (list 2)", 3)
     for text, _ in today_items:
         doc.item(strip_ids(text), size=11, after=0, tail=points_of(text, pts, ""))
-    doc.para("This week: " + " · ".join(f"{i + 1}. {strip_ids(g)}" for i, (g, _) in enumerate(week_items)), 10, after=2)
+    goals = [g for g, _ in week_prios] or [g for g, _ in week_items]
+    doc.para("This week: " + " · ".join(f"{i + 1}. {strip_ids(g)}" for i, g in enumerate(goals)), 10, after=2)
 
     daily = tasks.get("Daily decisions", [])
     if daily:
@@ -459,10 +480,27 @@ def build(today, pages=None):
     for text, _ in today_items:
         none = "100-200 pts each" if "Here and now" in text else "rest · no points"
         task_item(text, size=12, after=3, none=none)
-    doc.heading("This week", 1)
-    doc.note(week_title)
-    for text, _ in week_items:
-        task_item(text, size=12, after=3)
+    # The week plan (merged in from the old Word weekly plan, Me-Weekly.docx, 17 Nov 2026)
+    doc.heading("Week plan", 1)
+    doc.note(week_title or week_of + ". Stephen's week priorities, in his order.")
+    if week_prios:
+        for i, (prio, steps) in enumerate(week_prios, 1):
+            p = doc.item(strip_ids(prio), box=False, size=13, label=str(i), after=1)
+            p.paragraph_format.keep_with_next = True
+            for s in steps:
+                q = doc.item(strip_ids(s), size=12, after=1, tail=points_of(s, pts, ""))
+                q.paragraph_format.left_indent = Inches(0.7)
+            doc.para(after=2)
+    else:
+        for text, _ in week_items:
+            task_item(text, size=12, after=3)
+    doc.heading("Weekly update (for the boss)", 1)
+    doc.note(week_of + ". Fill in by hand on Friday; the plan above is this week's \"In prospect\".")
+    doc.lines("Done this week", 3)
+    doc.heading("In prospect", 3)
+    for i, (prio, _) in enumerate(week_prios, 1):
+        doc.para(f"{i}. {strip_ids(prio)}", 11, after=1)
+    doc.lines("Risks and asks", 2)
 
     # ----- Page 3: strategic priorities, avoided projects, burndown -----
     doc.page()

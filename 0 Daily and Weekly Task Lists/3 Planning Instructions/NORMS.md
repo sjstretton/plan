@@ -28,14 +28,13 @@ Stephen describes himself as **AAAA**: anxious-avoidant, easily overwhelmed, bot
 | File | What it holds | Who writes it |
 |---|---|---|
 | `1-NextStep.txt` | NOW LIST (what to do now), POINTS LIST (tasks that score), DONE | Stephen sets; AI keeps tidy and moves done items |
-| `2-DayWeekPlan.txt` | SEQUENCING THINGS, DAY PLAN, WEEK PLAN | Stephen sets; AI fills in from what he says |
-| `3-PrioritiesAndQuickWins.txt` | The priorities and the quick wins Stephen picks | Stephen |
-| `4-Priorities.txt` | The current priority's next steps and open decisions | Stephen sets; AI ticks and updates |
+| `2-DayWeekPlan.txt` | WEEK PRIORITIES (numbered priorities, each with its steps) | Stephen sets; AI fills in from what he says |
+| `3-ProjectPlanPhD.txt` | The PhD priority's next steps and open decisions (was 4-Priorities.txt) | Stephen sets; AI ticks and updates |
 | `1 Quick Wins and Next Milestone/` | `1 Quick Win List.txt`; the current milestone plan (`2A ...`); `3 List of Next Milestones.txt` (only the ones Stephen chooses, in his order); other milestone plans in `Other Milestones/` | Stephen chooses; AI keeps each plan up to date |
 | `2 Strategic Plans/` | FY27 work plan, master plan, templates, past years | Stephen |
 | `3 Planning Instructions/` | These rules, `AGENTS.md`, `README.md`, `Context/`, `Scripts/` | AI, when Stephen changes the rules |
 | `4 Archive/` | Retired files (`3-OnePriority.txt`, the old project plans and done list). Read-only: don't revive them unless asked | - |
-| `5 Computer Generated/` | Files the scripts maintain; don't edit by hand. `5-TaskContextAndProjectPlans.md` (repo copy of the Sheet's Context tab: tasks, milestones, tables); `Printable/Me-Printable-Tracker.docx` (built) and `Printable/Versions/`; `Sync/sync-state.json` (last agreed state) | Scripts |
+| `5 Computer Generated/` | Files the scripts maintain; don't edit by hand. `5-TaskContextAndProjectPlans.md` (repo copy of the Sheet's Context tab: tasks, milestones, tables); `Printable/Me-Printable-Tracker.docx` (built; one document: the printable lists plus the week plan and weekly update, which replaced `Me-Weekly.docx` on 17 Nov 2026) and `Printable/Versions/`; `Sync/sync-state.json` (last agreed state) | Scripts |
 
 Stephen's files stay at the top of `0 Daily and Weekly Task Lists/`; anything a script writes goes in `5 Computer Generated/`. Keep each file in the headings it already has. Don't rename or move files unless Stephen asks.
 
@@ -44,7 +43,7 @@ Stephen's files stay at the top of `0 Daily and Weekly Task Lists/`; anything a 
 - **Done is done everywhere.** When something is done, tick it in the file and the Sheet. At the end of the day, move ticked items to DONE with the date, then clear DONE once Stephen has seen it.
 - **Points** (Stephen's scheme): task 100 (quick) or 200; milestone 1000, plus 4000 if done in its target week (5000), or +500 if done before it (1500). Kriya 10 x streak (days). CPAP 1 point per minute. Gym 100. Morning-routine step 10. Keep the points next to each item where it has them.
 - **Deadlines.** Write them as Stephen gives them (`By 7pm: ...`). Mark a date nobody confirmed with (?).
-- **Tasks in other repos.** When a session finishes work Stephen set in another repo, record it here (tick it in `1-NextStep.txt` or `4-Priorities.txt`, or the milestone plan) or put it in the final message if this repo can't be reached.
+- **Tasks in other repos.** When a session finishes work Stephen set in another repo, record it here (tick it in `1-NextStep.txt` or `3-ProjectPlanPhD.txt`, or the milestone plan) or put it in the final message if this repo can't be reached.
 - **Links.** When a file is added, renamed, moved or deleted, update the Links tab of the master Sheet and the file table above in the same session.
 - Don't invent facts, figures or dates. Mark anything uncertain.
 
@@ -54,8 +53,8 @@ Stephen's files stay at the top of `0 Daily and Weekly Task Lists/`; anything a 
 
 - **Today** (first tab): Stephen's one-screen day: the priority's next step, core items, health and the score. Update it when he gives you the day's items or ticks.
 - **Tracker**: points, the week, the daily tracker (CPAP, Kriya, gym). Log what he gives.
-- **Links**: links to the repo files at `cpmodelai/planning`. Keep them in step with the folder layout.
-- **Plan**: Stephen's four list files (`4-Priorities.txt` first, then `1-NextStep.txt`, `3-PrioritiesAndQuickWins.txt`, `2-DayWeekPlan.txt`), then the strategic priorities, burndown and key decisions. **Dashboard**: the NOW LIST and POINTS LIST as quick rewards, the morning routine, the focus project and priority milestone. **Context**: the task table. **Regular lists** and **Updateable lists**: the lists. These five are built and synced by `Scripts/update.py` (below); never change their layout by hand.
+- **Links**: links to the repo files at `sjstretton/plan`. Keep them in step with the folder layout.
+- **Plan**: Stephen's four list files (`3-ProjectPlanPhD.txt` first, then `1-NextStep.txt`, `2-DayWeekPlan.txt`), then the strategic priorities, burndown and key decisions. **Dashboard**: the NOW LIST and POINTS LIST as quick rewards, the morning routine, the focus project and priority milestone. **Context**: the task table. **Regular lists** and **Updateable lists**: the lists. These five are built and synced by `Scripts/update.py` (below); never change their layout by hand.
 - **Track 2, Strategic plan, Today, Links**: edited by hand.
 
 Only one session writes to the Sheet at a time.
@@ -68,7 +67,7 @@ Only one session writes to the Sheet at a time.
 
 Answer from what Stephen has set (the files above and the Today tab). Each item shows its points and the one thing needed to start.
 
-- **"What's next?"**: the top item on the NOW LIST (or the priority's next step in `4-Priorities.txt`), and how long it takes. Nothing else.
+- **"What's next?"**: the top item on the NOW LIST (or the priority's next step in `3-ProjectPlanPhD.txt`), and how long it takes. Nothing else.
 - **"Give me the quick win list"**: 2-3 for now, 2-3 for later, from `1 Quick Win List.txt` and the POINTS LIST. On a weekend, leave out weekday-only tasks.
 - **"Update the milestones"**: list the milestones from `3 List of Next Milestones.txt` with their status; ask for the new figures; record them.
 - **The WhatsApp briefing** (start or end of day, for the accountability contact): a date line, then a) CPAP, Kriya streak, morning routine; b) milestones; c) tasks, then the total. Every item shows its points. Start of day: potential points. End of day: points scored, after asking "Anything else done today?" and checking the day's commits. Stephen's local time is the Philippines (UTC+8): before 7am is the start-of-day briefing, after 11:55pm the end-of-day one; otherwise ask.

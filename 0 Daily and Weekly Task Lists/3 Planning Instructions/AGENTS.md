@@ -6,7 +6,7 @@ Paths below are from `0 Daily and Weekly Task Lists/`.
 
 ## Where things are
 
-- Day to day: `1-NextStep.txt`, `2-DayWeekPlan.txt`, `3-PrioritiesAndQuickWins.txt`, `4-Priorities.txt`.
+- Day to day: `1-NextStep.txt`, `2-DayWeekPlan.txt`, `3-ProjectPlanPhD.txt`.
 - Quick wins and milestones: `1 Quick Wins and Next Milestone/`.
 - Strategic plans: `2 Strategic Plans/` (FY27 work plan `Stephen_FY27_Work_Plan_v2.6_15thOct.docx`).
 - Rules and context: `3 Planning Instructions/` (this folder).

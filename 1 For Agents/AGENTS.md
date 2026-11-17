@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Instructions for AI agents, including Claude Code (`CLAUDE.md` points here), working in this repo (`cpmodelai/planning`). Read this file first, then `0 Daily and Weekly Task Lists/3 Planning Instructions/AGENTS.md` and its `NORMS.md`; they take precedence for planning work.
+Instructions for AI agents, including Claude Code (`CLAUDE.md` points here), working in this repo (`sjstretton/plan`). Read this file first, then `0 Daily and Weekly Task Lists/3 Planning Instructions/AGENTS.md` and its `NORMS.md`; they take precedence for planning work.
 
 ## Roles
 
@@ -12,7 +12,7 @@ Everything for planning is in `0 Daily and Weekly Task Lists/`:
 
 | Folder or file | What it is for |
 |---|---|
-| `1-NextStep.txt`, `2-DayWeekPlan.txt`, `3-PrioritiesAndQuickWins.txt`, `4-Priorities.txt` | Day-to-day lists Stephen sets |
+| `1-NextStep.txt`, `2-DayWeekPlan.txt`, `3-ProjectPlanPhD.txt` | Day-to-day lists Stephen sets |
 | `1 Quick Wins and Next Milestone/` | Quick win list, the next milestone plan, the list of milestones |
 | `2 Strategic Plans/` | FY27 work plan and master plan, templates, past years |
 | `3 Planning Instructions/` | The rules (`NORMS.md`), procedures (`AGENTS.md`), context and scripts |

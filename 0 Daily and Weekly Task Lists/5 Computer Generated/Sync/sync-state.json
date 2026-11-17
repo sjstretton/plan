@@ -1,11 +1,11 @@
 {
  "printable": {
-  "built": "2026-11-14",
-  "docx": "5b75c7f1e2b2f9d1",
-  "sources": "c87214a353677579",
-  "version": "0.7"
+  "built": "2026-11-17",
+  "docx": "844e90b792b64848",
+  "sources": "f461268f64c0c1bc",
+  "version": "0.8"
  },
- "synced": "2026-11-14T22:15:20",
+ "synced": "2026-11-17T01:47:18",
  "units": {
   "list:anxiety + sleep protocol": "699d7fe5f886ebf8",
   "list:evening": "e08384bf2c0dffd3",
@@ -13,9 +13,7 @@
   "list:gym, longer session (~30 min)": "dba3adcc95974f00",
   "list:main bag (every morning)": "1a030f7525acdda9",
   "list:morning (an hour from waking; then full kriya and breakfast 8-9)": "4550b60481695f40",
-  "plan:dayweek/DAY PLAN": "a57703a7361167ad",
-  "plan:dayweek/SEQUENCING THINGS": "6647864f1e7a4f63",
-  "plan:dayweek/WEEK PLAN": "a09ef7a027f37b02",
+  "plan:dayweek/WEEK PRIORITIES": "7a96a82560bae0d1",
   "plan:next/DONE": "0cb52b77c68de810",
   "plan:next/Home Admin": "2389f2b86c55a162",
   "plan:next/Home Emotional": "6c86cd21fcaed2e1",
