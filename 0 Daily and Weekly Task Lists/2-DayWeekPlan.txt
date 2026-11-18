@@ -18,3 +18,74 @@
 
 5. Update CPAT
 - Full new version
+ 
+
+
+====================
+
+OVERALL NORMS
+
+
+Eliminate all active inputs in the ETS and feebate section.
+
+Make sure there is a benchmark start and benchmark target.
+
+Feebates will only have the other industry, not the transport and residential part.
+
+Outside of power and CBAM sectors, the model will use the auction % elsewhere.
+
+
+FORMATTING.
+Avoid titles on two rows (at present you have these often with first row bolded, which looks ugly).
+
+CARBON TAX COVERAGE
+
+
+On the headings: all should be using one row, with text wrapping, and should be consistently bolded.
+Change enhancement to "Scale sectoral price?"
+"Sectoral Rebating"
+Both should be formatted as percentage.
+
+Add two more informational columns:
+Tax rate in included fuels $/tCO2
+Feebate $/tCO2
+
+SUBSIDY REMOVAL/PRICE CONTROLS/EXCISES.
+
+Switch the order so that the B1, Subsidy reform, B2 Price control and B6 additional excises. tables are above the relevant columns
+
+Make sure Full Pigouvian Taxation has a start year and a Target Year.
+
+ETS.
+
+Again fix the headings, so they are on only one row. 
+
+Format the Cut versus baseline (enter negative number) numbers as %. Also same with Auctioned %.
+
+C2, eliminate the Power and Rest of industry from the model.
+
+Remove Buildings and Transport sections.
+
+
+PRICING TABLE
+Integrate
+
+POWER
+
+Implement a phase out tick box, and a phase out begins year. We won't have a azero year.
+
+Format the Capacity with two decimal pkaces.
+
+
+TRANSPORT
+Again the two row bug again. Keep it on one row.
+
+
+NON ENERGY EMISSIONS
+Remove the Article 5 cell. It's not neded.
+
+Put emissions first. Again we have a hyphen bug and across the cell.
+
+
+Give me a new version of the interface.
+
